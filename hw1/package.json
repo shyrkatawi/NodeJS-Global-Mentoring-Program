@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev_task1": "nodemon task1.js",
-    "task1": "node task1.js"
+    "dev_task2": "nodemon task2.js",
+    "task1": "node task1.js",
+    "task2": "node task2.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "nodemon": "2.0.15"
+  },
+  "dependencies": {
+    "csvtojson" : "2.0.10"
   }
 }
