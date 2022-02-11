@@ -23,6 +23,7 @@ export const getAutoSuggestUsersScheme = Joi.object().keys({
     loginSubstring: Joi.string()
         .required(),
     limit: Joi.number()
+        .min(0)
         .required()
 });
 

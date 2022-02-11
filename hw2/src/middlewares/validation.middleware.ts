@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { ValidationException } from '../exceptions/validation.exception';
-import { idInParamsScheme } from '../routes/schemes/user.scheme';
+import { idInParamsScheme } from '../schemes/user.scheme';
 
 export const validateIdInParams = () => {
     return (req, res, next) => {

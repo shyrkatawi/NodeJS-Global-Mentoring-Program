@@ -1,7 +1,7 @@
 import express from 'express';
 import { usersService } from '../services/users.service';
 import { RequestAutoSuggestUsersDto, RequestUserDto, User } from '../types/user';
-import { getAutoSuggestUsersScheme, requestUserScheme } from './schemes/user.scheme';
+import { getAutoSuggestUsersScheme, requestUserScheme } from '../schemes/user.scheme';
 import { validateBodySchema, validateIdInParams } from '../middlewares/validation.middleware';
 
 const usersRouter = express.Router();
@@ -61,8 +61,8 @@ usersRouter.put('/id/:id',
         try {
             const id: string = req.params.id;
             const requestUserDto: RequestUserDto = req.body;
-            const updatedUser: User = await usersService.updateUser(id, requestUserDto);
-            res.send(updatedUser);
+            const message: string = await usersService.updateUser(id, requestUserDto);
+            res.send(message);
         } catch (error) {
             next(error);
         }
@@ -75,8 +75,8 @@ usersRouter.delete('/id/:id',
     async (req, res, next) => {
         try {
             const id: string = req.params.id;
-            const deletedUser: User = await usersService.deleteUserById(id);
-            res.send(deletedUser);
+            const message: string = await usersService.deleteUserById(id);
+            res.send(message);
         } catch (error) {
             next(error);
         }

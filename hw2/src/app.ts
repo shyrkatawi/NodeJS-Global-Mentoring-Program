@@ -1,9 +1,12 @@
 import express from 'express';
 import { usersRouter } from './routes/users.route';
 import { StatusCodes } from 'http-status-codes';
+import { sequelize } from './data-access/sequelize';
+import { UserModel } from './models/user.model';
+import 'dotenv/config';
 
 export const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 app.disable('x-powered-by');
 app.disable('etag');
@@ -17,6 +20,13 @@ app.use((err, req, res, next) => {
     next();
 });
 
-app.listen(PORT, () => {
-    console.log(`Listening at http://localhost:${PORT}`);
+app.listen(PORT, async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+        await UserModel.sync({ force: true }); // i understand how { force: true } works
+        console.log(`Listening at http://localhost:${PORT}`);
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
 });
