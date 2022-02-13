@@ -1,50 +1,64 @@
-import { UserNotFoundException } from '../exceptions/user-not-found.exception';
+import { NotFoundException } from '../exceptions/not-found.exception';
 import { RequestAutoSuggestUsersDto, RequestUserDto, User } from '../types/user';
-import { db } from '../data-access/db';
+import { UserModel } from '../data-access/models/user.model';
+import { Op } from 'sequelize';
 
 class UsersService {
     async addUser(user: User): Promise<User> {
-        const dbResponse = await db.userModel.create(user);
+        const dbResponse = await UserModel.create({ ...user });
         return dbResponse['dataValues'];
     }
 
     async clearStorage() {
-        await db.userModel.clearAllData();
+        await UserModel.sync({ force: true });
     }
 
     async deleteUserById(id: string): Promise<string> {
-        const dbResponse = db.userModel.deleteUserById(id);
-        const numberOfUpdatedRows = dbResponse[0];
-        if (numberOfUpdatedRows === 0) {
-            throw new UserNotFoundException(id);
+        const deletedUsers = await UserModel.destroy(
+            { where: { id: id } }
+        );
+        if (deletedUsers === 0) {
+            throw new NotFoundException(id,'user');
         }
         return `User with id ${id} was deleted`;
     }
 
     async getAutoSuggestUsers(requestAutoSuggestUsersDto: RequestAutoSuggestUsersDto): Promise<User[]> {
         let { limit, loginSubstring } = requestAutoSuggestUsersDto;
-        const dbResponse = await db.userModel.getAutoSuggestUsers(limit, loginSubstring);
+        const dbResponse = await UserModel.findAll({
+            where: {
+                login: {
+                    [Op.like]: `%${loginSubstring}%`
+                }
+            },
+            limit: limit
+        });
         return dbResponse.map(e => e['dataValues']);
     }
 
     async getUserById(id: string): Promise<User> {
-        const dbResponse = await db.userModel.getUserById(id);
+        const dbResponse = UserModel.findOne(
+            { where: { id: id } }
+        );
         if (!dbResponse) {
-            throw new UserNotFoundException(id);
+            throw new NotFoundException(id,'user');
         }
         return dbResponse['dataValues'];
     }
 
     async getUsers(): Promise<User[]> {
-        const dbResponse = await db.userModel.getUsers();
+        const dbResponse = await UserModel.findAll();
         return dbResponse.map(e => e['dataValues']);
     }
 
     async updateUser(id: string, requestUserDto: RequestUserDto): Promise<string> {
-        const dbResponse = await db.userModel.updateUserById(id, requestUserDto);
+        const dbResponse = await UserModel.update(
+            { ...requestUserDto },
+            { where: { id: id } }
+        );
         const numberOfUpdatedRows = dbResponse[0];
         if (numberOfUpdatedRows === 0) {
-            throw new UserNotFoundException(id);
+            throw new NotFoundException(id, 'user');
         }
         return `User with id ${id} was updated`;
     }

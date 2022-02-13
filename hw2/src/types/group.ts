@@ -12,3 +12,8 @@ export class Group {
         this.permissions = permissions;
     }
 }
+
+export interface RequestGroupDto {
+    name: string;
+    permissions: Array<Permission>;
+}

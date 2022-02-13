@@ -26,14 +26,3 @@ export const getAutoSuggestUsersScheme = Joi.object().keys({
         .min(0)
         .required()
 });
-
-export const idInParamsScheme = Joi
-    .string()
-    .guid({
-        version: [
-            'uuidv4',
-        ]})
-    .required()
-    .messages({
-    'string.guid': `id in the request parameters should be in UUIDv4 format`
-});

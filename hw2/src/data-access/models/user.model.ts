@@ -1,50 +1,13 @@
-import { DataTypes, Model, Op } from 'sequelize';
+import { DataTypes,Model } from 'sequelize';
 import { sequelize } from '../sequelize';
-import { RequestUserDto, User } from '../../types/user';
+import { User } from '../../types/user';
+import { UserGroupModel } from './user-group.model';
 
-export class UserModel extends Model {
-    async clearAllData(): Promise<void> {
-        await UserModel.sync({ force: true });
-    }
-
-    async create(user: User): Promise<UserModel> {
-        return UserModel.create({ ...user });
-    }
-
-    async deleteUserById(id: string): Promise<[number, UserModel[]]> {
-        return UserModel.update(
-            { isDeleted: true },
-            { where: { id: id } }
-        );
-    }
-
-    async getAutoSuggestUsers(limit: number, loginSubstring: string): Promise<UserModel[]> {
-        return UserModel.findAll({
-            where: {
-                login: {
-                    [Op.like]: `%${loginSubstring}%`
-                }
-            },
-            limit: limit
-        });
-    }
-
-    async getUserById(id: string): Promise<UserModel> {
-        return UserModel.findOne(
-            { where: { id: id } }
-        );
-    }
-
-    async getUsers(): Promise<UserModel[]> {
-        return UserModel.findAll();
-    }
-
-    async updateUserById(id: string, requestUserDto: RequestUserDto): Promise<[number, UserModel[]]> {
-        return UserModel.update(
-            { ...requestUserDto },
-            { where: { id: id } }
-        );
-    }
+export class UserModel extends Model implements User {
+    age: number;
+    id: string;
+    login: string;
+    password: string;
 }
 
 UserModel.init(
@@ -57,11 +20,8 @@ UserModel.init(
             type: DataTypes.STRING,
             allowNull: false,
             primaryKey: true,
-            unique: true
-        },
-        isDeleted: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false
+            unique: true,
+            onDelete: 'CASCADE',
         },
         login: {
             type: DataTypes.STRING,
@@ -80,3 +40,5 @@ UserModel.init(
         updatedAt: false
     }
 );
+
+UserGroupModel.belongsTo(UserModel, { foreignKey: 'user_id', targetKey: 'id' });

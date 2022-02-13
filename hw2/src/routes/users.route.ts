@@ -70,7 +70,7 @@ usersRouter.put('/id/:id',
     }
 );
 
-// soft delete user by uuid
+// delete user by uuid
 usersRouter.delete('/id/:id',
     validateIdInParams(),
     async (req, res, next) => {
