@@ -3,15 +3,16 @@ import { v4 as uuidv4 } from 'uuid';
 export class User {
     age: number;
     id: string;
-    isDeleted: boolean = false;
+    isDeleted: boolean;
     login: string;
     password: string;
 
-    constructor(requestUserDto: RequestUserDto) {
+    constructor(age: number, login: string, password: string) {
+        this.age = age;
         this.id = uuidv4();
-        this.login = requestUserDto.login;
-        this.password = requestUserDto.password;
-        this.age = requestUserDto.age;
+        this.isDeleted = false;
+        this.login = login;
+        this.password = password;
     }
 }
 
