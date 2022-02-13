@@ -2,7 +2,7 @@ import express from 'express';
 import { usersRouter } from './routes/users.route';
 import { StatusCodes } from 'http-status-codes';
 import { sequelize } from './data-access/sequelize';
-import { UserModel } from './models/user.model';
+import { UserModel } from './data-access/models/user.model';
 import 'dotenv/config';
 
 export const app = express();
