@@ -15,6 +15,7 @@ export const sequelize = new Sequelize(
     {
         host: HOST,
         port: PORT,
-        dialect: DIALECT
+        dialect: DIALECT,
+        logging: false
     }
 );

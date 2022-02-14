@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
 import { sequelize } from './data-access/sequelize';
-import { StatusCodes } from 'http-status-codes';
 
 import { usersRouter } from './routes/users.route';
 import { groupsRouter } from './routes/group.route';
@@ -9,6 +8,8 @@ import { groupsRouter } from './routes/group.route';
 import { UserModel } from './data-access/models/user.model';
 import { GroupModel } from './data-access/models/group.model';
 import { UserGroupModel } from './data-access/models/user-group.model';
+import { handleErrorFromDB, handleException, handleOtherErrors } from './middlewares/error-handling.middleware';
+import { logErrorInfo, logRequestInfo } from './middlewares/logger.middleware';
 
 export const app = express();
 const PORT = process.env.PORT;
@@ -17,26 +18,17 @@ app.disable('x-powered-by');
 app.disable('etag');
 
 app.use(express.json());
+
+app.use(logRequestInfo);
 app.use('/users', usersRouter);
 app.use('/groups', groupsRouter);
 
-app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+app.use(logErrorInfo);
+app.use(handleErrorFromDB);
+app.use(handleException);
+app.use(handleOtherErrors);
 
-    let errorMessage;
-    if (err.original?.detail) {
-        console.log(err.original.detail);
-        errorMessage = `ERROR: ${err.original.detail}`;
-    } else if (err.message) {
-        errorMessage = `ERROR: ${err.message}`;
-    } else {
-        errorMessage = `ERROR: unexpected server error`;
-    }
-
-    res.status(statusCode);
-    res.send(errorMessage);
-    next();
-});
+process.on('uncaughtException', handleOtherErrors);
 
 app.listen(PORT, async () => {
     try {
