@@ -4,7 +4,7 @@ import { Permission } from '../types/permission';
 export const requestGroupScheme = Joi.object().keys({
     name: Joi.string()
         .required()
-        .pattern(/\w/),
+        .pattern(/^\w+$/),
     permissions: Joi.array()
         .required()
         .min(1)

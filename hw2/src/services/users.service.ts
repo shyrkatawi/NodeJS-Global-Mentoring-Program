@@ -19,7 +19,7 @@ class UsersService {
             { where: { id: id } }
         );
         if (deletedUsers === 0) {
-            throw new NotFoundException(id, 'user');
+            throw new NotFoundException(`Can not find user with id "${id}`);
         }
         return `User with id ${id} was deleted`;
     }
@@ -46,7 +46,7 @@ class UsersService {
                 { where: { id: id } }
             );
         if (!dbResponse) {
-            throw new NotFoundException(id, 'user');
+            throw new NotFoundException(`Can not find user with id "${id}`);
         }
         return dbResponse['dataValues'];
     }
@@ -65,7 +65,7 @@ class UsersService {
         );
         const numberOfUpdatedRows = dbResponse[0];
         if (numberOfUpdatedRows === 0) {
-            throw new NotFoundException(id, 'user');
+            throw new NotFoundException(`Can not find user with id "${id}`);
         }
         return `User with id ${id} was updated`;
     }

@@ -24,3 +24,8 @@ export interface RequestAutoSuggestUsersDto {
     loginSubstring: string;
     limit: number;
 }
+
+export interface LoginUserDto {
+    login: string;
+    password: string;
+}

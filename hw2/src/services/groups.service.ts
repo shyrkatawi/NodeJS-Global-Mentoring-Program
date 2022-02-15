@@ -31,7 +31,7 @@ class GroupsService {
             }
         });
         if (removedRows === 0) {
-            throw new NotFoundException(id, 'group');
+            throw new NotFoundException(`Can not find group with id ${id}`);
         }
         return `Group with id ${id} was deleted`;
     }
@@ -41,7 +41,7 @@ class GroupsService {
             { where: { id: id } }
         );
         if (!group) {
-            throw new NotFoundException(id, 'group');
+            throw new NotFoundException(`Can not find group with id ${id}`);
         }
         return group['dataValues'];
     }
@@ -59,7 +59,7 @@ class GroupsService {
         );
         const numberOfUpdatedRows = dbResponse[0];
         if (numberOfUpdatedRows === 0) {
-            throw new NotFoundException(id, 'group');
+            throw new NotFoundException(`Can not find group with id ${id}`);
         }
         return `Group with id ${id} was updated`;
     }
