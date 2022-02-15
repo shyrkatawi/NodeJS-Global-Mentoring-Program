@@ -46,8 +46,8 @@ usersRouter.post('/',
             const requestUserDto: RequestUserDto = req.body;
             const { age, login, password }: { age: number, login: string, password: string } = requestUserDto;
             const user: User = new User(age, login, password);
-            const createdUser: User = await usersService.addUser(user);
-            res.send(createdUser);
+            const message: string = await usersService.addUser(user);
+            res.send(message);
         } catch (error) {
             next(error);
         }

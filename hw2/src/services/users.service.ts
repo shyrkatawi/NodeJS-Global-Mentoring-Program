@@ -4,9 +4,10 @@ import { UserModel } from '../data-access/models/user.model';
 import { Op } from 'sequelize';
 
 class UsersService {
-    async addUser(user: User): Promise<User> {
+    async addUser(user: User): Promise<string> {
         const dbResponse = await UserModel.create({ ...user });
-        return dbResponse['dataValues'];
+        const createdUser = dbResponse['dataValues'];
+        return `User with id ${createdUser.id} was created`;
     }
 
     async clearStorage() {
@@ -18,36 +19,42 @@ class UsersService {
             { where: { id: id } }
         );
         if (deletedUsers === 0) {
-            throw new NotFoundException(id,'user');
+            throw new NotFoundException(id, 'user');
         }
         return `User with id ${id} was deleted`;
     }
 
     async getAutoSuggestUsers(requestAutoSuggestUsersDto: RequestAutoSuggestUsersDto): Promise<User[]> {
         let { limit, loginSubstring } = requestAutoSuggestUsersDto;
-        const dbResponse = await UserModel.findAll({
-            where: {
-                login: {
-                    [Op.like]: `%${loginSubstring}%`
-                }
-            },
-            limit: limit
-        });
+        const dbResponse = await UserModel
+            .scope('withoutPassword')
+            .findAll({
+                where: {
+                    login: {
+                        [Op.like]: `%${loginSubstring}%`
+                    }
+                },
+                limit: limit
+            });
         return dbResponse.map(e => e['dataValues']);
     }
 
     async getUserById(id: string): Promise<User> {
-        const dbResponse = UserModel.findOne(
-            { where: { id: id } }
-        );
+        const dbResponse = await UserModel
+            .scope('withoutPassword')
+            .findOne(
+                { where: { id: id } }
+            );
         if (!dbResponse) {
-            throw new NotFoundException(id,'user');
+            throw new NotFoundException(id, 'user');
         }
         return dbResponse['dataValues'];
     }
 
     async getUsers(): Promise<User[]> {
-        const dbResponse = await UserModel.findAll();
+        const dbResponse = await UserModel
+            .scope('withoutPassword')
+            .findAll();
         return dbResponse.map(e => e['dataValues']);
     }
 

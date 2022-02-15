@@ -37,7 +37,12 @@ UserModel.init(
         modelName: 'UserModel',
         tableName: 'users',
         createdAt: false,
-        updatedAt: false
+        updatedAt: false,
+        scopes: {
+            withoutPassword: {
+                attributes: { exclude: ['password'] },
+            }
+        }
     }
 );
 
